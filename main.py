@@ -1,5 +1,5 @@
 from keras.models import Sequential
-from keras.layers import Convolution2D, MaxPooling2D, ZeroPadding2D
+from keras.layers import Convolution2D, MaxPooling2D, ZeroPadding2D, Activation
 from keras.layers import Dropout, Flatten, Dense
 from keras.preprocessing.image import ImageDataGenerator
 
@@ -36,8 +36,8 @@ def addCNNlayer(model, n_filter, n_conv, n_pool, input_height=None, input_width=
 
 
 # path to the model weights file.
-weights_path = 'lfs_tracked/vgg16_weights.h5'
-top_model_weights_path = 'lfs_tracked/bottleneck_fc_model.h5'
+weights_path = 'large_files/vgg16_weights.h5'
+top_model_weights_path = 'large_files/bottleneck_fc_model.h5'
 # path to data files
 train_data_dir = 'data/train'
 validation_data_dir = 'data/validation'
@@ -114,7 +114,7 @@ def save_bottleneck_features(img_width, img_height, weights_path, train_data_dir
         shuffle=False
     )
     bottleneck_features_train = model.predict_generator(generator, nb_train_samples)
-    np.save(open('lfs_tracked/bottleneck_features_train.npy', 'w'), bottleneck_features_train)
+    np.save(open('large_files/bottleneck_features_train.npy', 'w'), bottleneck_features_train)
 
     generator = datagen.flow_from_directory(
         validation_data_dir,
@@ -124,15 +124,15 @@ def save_bottleneck_features(img_width, img_height, weights_path, train_data_dir
         shuffle=False
     )
     bottleneck_features_validation = model.predict_generator(generator, nb_validation_samples)
-    np.save(open('lfs_tracked/bottleneck_features_validation.npy', 'w'), bottleneck_features_validation)
+    np.save(open('large_files/bottleneck_features_validation.npy', 'w'), bottleneck_features_validation)
     print('bottleneck features saved to file')
 
 
 # save_bottleneck_features(width, height, weights_path, train_data_dir, validation_data_dir)
 
-train_data = np.load(open('lfs_tracked/bottleneck_features_train.npy'))
+train_data = np.load(open('large_files/bottleneck_features_train.npy'))
 train_labels = np.array([0] * (nb_train_samples / 2) + [1] * (nb_train_samples / 2))
-validation_data = np.load(open('lfs_tracked/bottleneck_features_validation.npy'))
+validation_data = np.load(open('large_files/bottleneck_features_validation.npy'))
 validation_labels = np.array([0] * (nb_validation_samples / 2) + [1] * (nb_validation_samples / 2))
 
 # full connected layer added to VGG16 convolution layers
